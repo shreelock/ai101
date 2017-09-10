@@ -85,8 +85,61 @@ def depthFirstSearch(problem):
     print "Start:", problem.getStartState()
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
+
+    We should be able to run the following after this implementation
+
+    python pacman.py -l tinyMaze -p SearchAgent
+    python pacman.py -l mediumMaze -p SearchAgent
+    python pacman.py -l bigMaze -z .5 -p SearchAgent
     """
-    "*** YOUR CODE HERE ***"
+    print "Start:", problem.getStartState()
+
+    #Since we want to implement Depth First Search, we are using stack as our fringe list
+    fringeList = util.Stack()
+    alreadyExpandedItemsList = []
+
+    currentState = problem.getStartState()
+    currentStatePath = currentState
+    fringeList.push(currentStatePath)
+    firstIter = True
+    foundGoal = False
+    while not fringeList.isEmpty() and not foundGoal:
+        if not problem.isGoalState(currentState):
+            print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
+            currentStatePath = fringeList.pop()
+            print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+
+            if firstIter is True:
+                currentState = currentStatePath
+                firstIter = False
+            else:
+                currentState = currentStatePath[0][0]
+
+            print "Got currentState as : ", currentState
+
+            if currentState not in alreadyExpandedItemsList:
+
+                successorsRichData =  problem.getSuccessors(currentState)
+                print "successors : ", successorsRichData
+
+                for successor in successorsRichData :
+                    fringeList.push([successor, currentStatePath])
+
+                alreadyExpandedItemsList.append(currentState)
+                print "fringelist size : ", len(fringeList.list)
+                print "fringelist cont : "
+                for l in fringeList.list:
+                    print l
+
+            else:
+                print "already expanded : ", currentState
+        else:
+            print "found goal state : ", currentStatePath
+            foundGoal = True
+
+
+    print " Stopped the Algo"
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
