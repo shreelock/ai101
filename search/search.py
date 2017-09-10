@@ -105,9 +105,9 @@ def depthFirstSearch(problem):
     foundGoal = False
     while not fringeList.isEmpty() and not foundGoal:
         if not problem.isGoalState(currentState):
-            print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
+            # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
             currentStatePath = fringeList.pop()
-            print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
 
             if firstIter is True:
                 currentState = currentStatePath
@@ -115,32 +115,41 @@ def depthFirstSearch(problem):
             else:
                 currentState = currentStatePath[0][0]
 
-            print "Got currentState as : ", currentState
+            # print "Got currentState as : ", currentState
 
             if currentState not in alreadyExpandedItemsList:
 
                 successorsRichData =  problem.getSuccessors(currentState)
-                print "successors : ", successorsRichData
+                # print "successors : ", successorsRichData
 
                 for successor in successorsRichData :
                     fringeList.push([successor, currentStatePath])
 
                 alreadyExpandedItemsList.append(currentState)
-                print "fringelist size : ", len(fringeList.list)
-                print "fringelist cont : "
-                for l in fringeList.list:
-                    print l
+                # print "fringelist size : ", len(fringeList.list)
+                # print "fringelist cont : "
+                # for l in fringeList.list:
+                #     print l
 
             else:
-                print "already expanded : ", currentState
+                # print "already expanded : ", currentState
+                pass
         else:
-            print "found goal state : ", currentStatePath
+            # print "found goal state : ", currentStatePath
             foundGoal = True
 
+    dirPath = []
+    temp = currentStatePath
+    dirPath.append(temp[0][1])
+    while type(temp[1]) is not tuple:
+        dirPath.append(temp[1][0][1])
+        temp = temp[1]
 
-    print " Stopped the Algo"
+    print "found direction path as : ", list(reversed(dirPath))
 
-    util.raiseNotDefined()
+    return list(reversed(dirPath))
+
+    # util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
