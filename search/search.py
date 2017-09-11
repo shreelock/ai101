@@ -152,8 +152,63 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    print "Start:", problem.getStartState()
+
+    # Since we want to implement Depth First Search, we are using stack as our fringe list
+    fringeList = util.Queue()
+    alreadyExpandedItemsList = []
+
+    currentState = problem.getStartState()
+    currentStatePath = [(currentState, 'Start', 0,)]
+    fringeList.push(currentStatePath)
+    foundGoal = False
+
+    while not fringeList.isEmpty() and not foundGoal:
+        if not problem.isGoalState(currentState):
+            # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
+
+            if currentState not in alreadyExpandedItemsList:
+
+                successorsRichData = problem.getSuccessors(currentState)
+                # print "successors : ", successorsRichData
+
+                for successor in successorsRichData:
+                    tempStatePath = list(currentStatePath)
+                    tempStatePath.insert(0, successor)
+                    # PReversing the TempStatePath since we want newest candidate in the beginning
+                    # tempStatePath.reverse()
+                    fringeList.push(tempStatePath)
+
+                alreadyExpandedItemsList.append(currentState)
+                # print "fringelist size : ", len(fringeList.list)
+                # print "fringelist cont : "
+                # for l in fringeList.list:
+                #     print l
+
+            else:
+                # print "already expanded : ", currentState
+                pass
+        else:
+            # print "found goal state : ", currentStatePath
+            foundGoal = True
+
+    dirPath = []
+    for state in currentStatePath:
+        step = state[1]
+        if step is not 'Start':
+            dirPath.append(step)
+    dirPath.reverse()
+
+    print "found direction path as : ", list(dirPath)
+
+    return list(dirPath)
+
+    # util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
