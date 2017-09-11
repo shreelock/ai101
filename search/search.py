@@ -99,22 +99,17 @@ def depthFirstSearch(problem):
     alreadyExpandedItemsList = []
 
     currentState = problem.getStartState()
-    currentStatePath = currentState
+    currentStatePath = [(currentState, 'Start', 0,)]
     fringeList.push(currentStatePath)
-    firstIter = True
     foundGoal = False
+
     while not fringeList.isEmpty() and not foundGoal:
         if not problem.isGoalState(currentState):
             # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
             currentStatePath = fringeList.pop()
             # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
 
-            if firstIter is True:
-                currentState = currentStatePath
-                firstIter = False
-            else:
-                currentState = currentStatePath[0][0]
-
+            currentState = currentStatePath[0][0]
             # print "Got currentState as : ", currentState
 
             if currentState not in alreadyExpandedItemsList:
@@ -123,7 +118,11 @@ def depthFirstSearch(problem):
                 # print "successors : ", successorsRichData
 
                 for successor in successorsRichData :
-                    fringeList.push([successor, currentStatePath])
+                    tempStatePath = list(currentStatePath)
+                    tempStatePath.insert(0, successor)
+                    #PReversing the TempStatePath since we want newest candidate in the beginning
+                    # tempStatePath.reverse()
+                    fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
                 # print "fringelist size : ", len(fringeList.list)
@@ -139,15 +138,15 @@ def depthFirstSearch(problem):
             foundGoal = True
 
     dirPath = []
-    temp = currentStatePath
-    dirPath.append(temp[0][1])
-    while type(temp[1]) is not tuple:
-        dirPath.append(temp[1][0][1])
-        temp = temp[1]
+    for state in currentStatePath:
+        step = state[1]
+        if step is not 'Start':
+            dirPath.append(step)
+    dirPath.reverse()
 
-    print "found direction path as : ", list(reversed(dirPath))
+    print "found direction path as : ", list(dirPath)
 
-    return list(reversed(dirPath))
+    return list(dirPath)
 
     # util.raiseNotDefined()
 
