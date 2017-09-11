@@ -120,8 +120,6 @@ def depthFirstSearch(problem):
                 for successor in successorsRichData :
                     tempStatePath = list(currentStatePath)
                     tempStatePath.insert(0, successor)
-                    #PReversing the TempStatePath since we want newest candidate in the beginning
-                    # tempStatePath.reverse()
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
@@ -148,13 +146,20 @@ def depthFirstSearch(problem):
 
     return list(dirPath)
 
-    # util.raiseNotDefined()
-
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
+    """
+    *** Search the shallowest nodes in the search tree first ***
+
+    We should be able to run the following after this implementation
+
+    python pacman.py -l mediumMaze -p SearchAgent -a fn=bfs
+    python pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5
+
+    """
+
     print "Start:", problem.getStartState()
 
-    # Since we want to implement Depth First Search, we are using stack as our fringe list
+    # Since we want to implement Breadth First Search, we are using queue as our fringe list
     fringeList = util.Queue()
     alreadyExpandedItemsList = []
 
@@ -180,8 +185,6 @@ def breadthFirstSearch(problem):
                 for successor in successorsRichData:
                     tempStatePath = list(currentStatePath)
                     tempStatePath.insert(0, successor)
-                    # PReversing the TempStatePath since we want newest candidate in the beginning
-                    # tempStatePath.reverse()
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
@@ -207,8 +210,6 @@ def breadthFirstSearch(problem):
     print "found direction path as : ", list(dirPath)
 
     return list(dirPath)
-
-    # util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
