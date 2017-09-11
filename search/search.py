@@ -212,9 +212,80 @@ def breadthFirstSearch(problem):
     return list(dirPath)
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+        *** Search the node of least total cost first ***
+
+        We should be able to run the following after this implementation
+
+        python pacman.py -l mediumMaze -p SearchAgent -a fn=ucs
+        python pacman.py -l mediumDottedMaze -p StayEastSearchAgent
+        python pacman.py -l mediumScaryMaze -p StayWestSearchAgent
+
+        """
+
+    print "Start:", problem.getStartState()
+
+    # Since we want to implement Uniform Cost Search, we are using queue as our fringe list
+    fringeList = util.PriorityQueue()
+    alreadyExpandedItemsList = []
+
+    currentState = problem.getStartState()
+    currentStatePath = [(currentState, 'Start', 0,)]
+    currentStatePathCost = getCurrentStatePathCost(currentStatePath)
+    fringeList.push(currentStatePath, currentStatePathCost)
+    foundGoal = False
+
+    while not fringeList.isEmpty() and not foundGoal:
+        if not problem.isGoalState(currentState):
+            # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
+
+            if currentState not in alreadyExpandedItemsList:
+
+                successorsRichData = problem.getSuccessors(currentState)
+                # print "successors : ", successorsRichData
+
+                for successor in successorsRichData:
+                    tempStatePath = list(currentStatePath)
+                    tempStatePath.insert(0, successor)
+                    currentStatePathCost = getCurrentStatePathCost(tempStatePath)
+                    fringeList.push(tempStatePath, currentStatePathCost)
+
+                alreadyExpandedItemsList.append(currentState)
+                # print "fringelist size : ", len(fringeList.list)
+                # print "fringelist cont : "
+                # for l in fringeList.list:
+                #     print l
+
+            else:
+                # print "already expanded : ", currentState
+                pass
+        else:
+            # print "found goal state : ", currentStatePath
+            foundGoal = True
+
+    dirPath = []
+    for state in currentStatePath:
+        step = state[1]
+        if step is not 'Start':
+            dirPath.append(step)
+    dirPath.reverse()
+
+    print "found direction path as : ", list(dirPath)
+
+    return list(dirPath)
+
+
+
+def getCurrentStatePathCost(currentStatePath):
+    cost = 0
+    for state in currentStatePath:
+        cost=cost+state[2]
+    return cost
 
 def nullHeuristic(state, problem=None):
     """
