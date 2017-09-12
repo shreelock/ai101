@@ -256,7 +256,7 @@ def uniformCostSearch(problem):
                     fringeList.push(tempStatePath, currentStatePathCost)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", len(fringeList.list)
+                print "fringelist size : ", len(fringeList.list)
                 # print "fringelist cont : "
                 # for l in fringeList.list:
                 #     print l
