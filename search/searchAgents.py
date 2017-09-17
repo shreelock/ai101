@@ -273,7 +273,7 @@ class CornersProblem(search.SearchProblem):
     You must select a suitable state space and successor function
     """
 
-    def __init__(self, startingGameState):
+    def __init__(self, startingGameState, costFn = lambda x: 1):
         """
         Stores the walls, pacman's starting position and corners.
         """
@@ -285,24 +285,37 @@ class CornersProblem(search.SearchProblem):
             if not startingGameState.hasFood(*corner):
                 print 'Warning: no food in corner ' + str(corner)
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
-        # Please add any code here which you would like to use
-        # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        self.costFn = costFn
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #We are using the following as the customStateSpace for our problem -
+        #1 Position (coordinates)
+        #2 Position of Corners left to visit
+        #3 For each iteration of find successors,
+        # we'll check what all corners are left and
+        # if the successor is one of the corners, we'll automatically update
+        # its list of corners left  to visit after going through that state.
+        cornersTouched = {}
+        for corner in self.corners:
+            cornersTouched[corner]=False
+        customStartState = (self.startingPosition, dict(cornersTouched))
+        return customStartState
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #Goal State is the state when all the corners are touched (eaten by the man)
+        cornersTouched = state[1]
+        for key, value in cornersTouched.iteritems():
+            if not value:
+                return False
+        #If all corners are touched
+        return True
 
     def getSuccessors(self, state):
         """
@@ -317,14 +330,22 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            (x,y), cornersTouched = state
+            #copying Dict into a new item to pass by value
+            #justPythonThings
+            tempCornersTouched = {}
+            for key, val in cornersTouched.iteritems():
+                tempCornersTouched[key]=val
 
-            "*** YOUR CODE HERE ***"
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                cost = self.costFn(nextState)
+                if nextState in tempCornersTouched:
+                    tempCornersTouched[nextState] = True
+                nextStateWithCornerInfo = (nextState, tempCornersTouched)
+                successors.append((nextStateWithCornerInfo, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -336,10 +357,12 @@ class CornersProblem(search.SearchProblem):
         """
         if actions == None: return 999999
         x,y= self.startingPosition
+        cost = 0
         for action in actions:
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]: return 999999
+            cost += self.costFn((x, y))
         return len(actions)
 
 
