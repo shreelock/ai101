@@ -100,18 +100,11 @@ def depthFirstSearch(problem):
 
     currentState = problem.getStartState()
     currentStatePath = [(currentState, 'Start', 0,)]
-    fringeList.push(currentStatePath)
     foundGoal = False
 
-    while not fringeList.isEmpty() and not foundGoal:
+    while True:
         if not problem.isGoalState(currentState):
             # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
-            currentStatePath = fringeList.pop()
-            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
-
-            currentState = currentStatePath[0][0]
-            # print "Got currentState as : ", currentState
-
             if currentState not in alreadyExpandedItemsList:
 
                 successorsRichData =  problem.getSuccessors(currentState)
@@ -131,9 +124,17 @@ def depthFirstSearch(problem):
             else:
                 # print "already expanded : ", currentState
                 pass
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
+
         else:
             # print "found goal state : ", currentStatePath
             foundGoal = True
+
+        if foundGoal:
+            break
 
     dirPath = []
     for state in currentStatePath:
@@ -165,18 +166,11 @@ def breadthFirstSearch(problem):
 
     currentState = problem.getStartState()
     currentStatePath = [(currentState, 'Start', 0,)]
-    fringeList.push(currentStatePath)
     foundGoal = False
 
-    while not fringeList.isEmpty() and not foundGoal:
+    while True:
         if not problem.isGoalState(currentState):
             # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
-            currentStatePath = fringeList.pop()
-            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
-
-            currentState = currentStatePath[0][0]
-            # print "Got currentState as : ", currentState
-
             if currentState not in alreadyExpandedItemsList:
 
                 successorsRichData = problem.getSuccessors(currentState)
@@ -196,9 +190,17 @@ def breadthFirstSearch(problem):
             else:
                 # print "already expanded : ", currentState
                 pass
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
+
         else:
             # print "found goal state : ", currentStatePath
             foundGoal = True
+
+        if foundGoal:
+            break
 
     dirPath = []
     for state in currentStatePath:
@@ -231,19 +233,11 @@ def uniformCostSearch(problem):
 
     currentState = problem.getStartState()
     currentStatePath = [(currentState, 'Start', 0,)]
-    currentStatePathCost = getCurrentStatePathCost(currentStatePath)
-    fringeList.push(currentStatePath, currentStatePathCost)
     foundGoal = False
 
-    while not fringeList.isEmpty() and not foundGoal:
+    while True:
         if not problem.isGoalState(currentState):
             # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
-            currentStatePath = fringeList.pop()
-            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
-
-            currentState = currentStatePath[0][0]
-            # print "Got currentState as : ", currentState
-
             if currentState not in alreadyExpandedItemsList:
 
                 successorsRichData = problem.getSuccessors(currentState)
@@ -264,9 +258,16 @@ def uniformCostSearch(problem):
             else:
                 # print "already expanded : ", currentState
                 pass
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
         else:
             # print "found goal state : ", currentStatePath
             foundGoal = True
+
+        if foundGoal:
+            break
 
     dirPath = []
     for state in currentStatePath:
