@@ -116,7 +116,7 @@ def depthFirstSearch(problem):
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", len(fringeList.list)
+                # print "fringelist size : ", fringeList.count
                 # print "fringelist cont : "
                 # for l in fringeList.list:
                 #     print l
@@ -182,7 +182,7 @@ def breadthFirstSearch(problem):
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", len(fringeList.list)
+                # print "fringelist size : ", fringeList.count
                 # print "fringelist cont : "
                 # for l in fringeList.list:
                 #     print l
@@ -250,7 +250,7 @@ def uniformCostSearch(problem):
                     fringeList.push(tempStatePath, currentStatePathCost)
 
                 alreadyExpandedItemsList.append(currentState)
-                print "fringelist size : ", len(fringeList.list)
+                # print "fringelist size : ", fringeList.count
                 # print "fringelist cont : "
                 # for l in fringeList.list:
                 #     print l
