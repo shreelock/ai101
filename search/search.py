@@ -99,6 +99,8 @@ def depthFirstSearch(problem):
     alreadyExpandedItemsList = []
 
     currentState = problem.getStartState()
+    # This variable contains the path followed from the start state to reach to current state.
+    # Its the same as the valeues to be put in FringeList
     currentStatePath = [(currentState, 'Start', 0,)]
     foundGoal = False
 
@@ -116,16 +118,15 @@ def depthFirstSearch(problem):
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", fringeList.count
-                # print "fringelist cont : "
-                # for l in fringeList.list:
-                #     print l
 
             else:
                 # print "already expanded : ", currentState
                 pass
             currentStatePath = fringeList.pop()
             # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            # Since current State Path - variable contains all the redundant information,
+            # we are extracting only the coordinates that will be used ib multiple functions.
+
             currentState = currentStatePath[0][0]
             # print "Got currentState as : ", currentState
 
@@ -141,21 +142,16 @@ def depthFirstSearch(problem):
         step = state[1]
         if step is not 'Start':
             dirPath.append(step)
+    # Since we are traversing in Latest to Oldest manner, we need to reverse the list to get directions from
+    # Oldest Node to Latest node.
     dirPath.reverse()
 
-    print "found direction path as : ", list(dirPath)
-
+    # print "found direction path as : ", list(dirPath)
     return list(dirPath)
 
 def breadthFirstSearch(problem):
     """
     *** Search the shallowest nodes in the search tree first ***
-
-    We should be able to run the following after this implementation
-
-    python pacman.py -l mediumMaze -p SearchAgent -a fn=bfs
-    python pacman.py -l bigMaze -p SearchAgent -a fn=bfs -z .5
-
     """
 
     print "Start:", problem.getStartState()
@@ -182,10 +178,6 @@ def breadthFirstSearch(problem):
                     fringeList.push(tempStatePath)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", fringeList.count
-                # print "fringelist cont : "
-                # for l in fringeList.list:
-                #     print l
 
             else:
                 # print "already expanded : ", currentState
@@ -194,14 +186,15 @@ def breadthFirstSearch(problem):
             # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
             currentState = currentStatePath[0][0]
             # print "Got currentState as : ", currentState
-
         else:
             # print "found goal state : ", currentStatePath
             foundGoal = True
 
         if foundGoal:
             break
-
+    '''
+    The explanation is provided in the function above : implementation of DFS.
+    '''
     dirPath = []
     for state in currentStatePath:
         step = state[1]
@@ -209,25 +202,17 @@ def breadthFirstSearch(problem):
             dirPath.append(step)
     dirPath.reverse()
 
-    print "found direction path as : ", list(dirPath)
-
     return list(dirPath)
 
 def uniformCostSearch(problem):
     """
-        *** Search the node of least total cost first ***
+        *** Search the node of least total cost first **
 
-        We should be able to run the following after this implementation
-
-        python pacman.py -l mediumMaze -p SearchAgent -a fn=ucs
-        python pacman.py -l mediumDottedMaze -p StayEastSearchAgent
-        python pacman.py -l mediumScaryMaze -p StayWestSearchAgent
-
-        """
+    """
 
     print "Start:", problem.getStartState()
 
-    # Since we want to implement Uniform Cost Search, we are using queue as our fringe list
+    # Since we want to implement Uniform Cost Search, we are using Priority Queue as our fringe list
     fringeList = util.PriorityQueue()
     alreadyExpandedItemsList = []
 
@@ -246,15 +231,12 @@ def uniformCostSearch(problem):
                 for successor in successorsRichData:
                     tempStatePath = list(currentStatePath)
                     tempStatePath.insert(0, successor)
+                    # The - "getCurrentStatePathCost" function calculates the total cost of the path till now,
+                    # , after inserting the current state into the current state path
                     currentStatePathCost = getCurrentStatePathCost(tempStatePath)
                     fringeList.push(tempStatePath, currentStatePathCost)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", fringeList.count
-                # print "fringelist cont : "
-                # for l in fringeList.list:
-                #     print l
-
             else:
                 # print "already expanded : ", currentState
                 pass
@@ -276,12 +258,10 @@ def uniformCostSearch(problem):
             dirPath.append(step)
     dirPath.reverse()
 
-    print "found direction path as : ", list(dirPath)
-
     return list(dirPath)
 
 
-
+# Calculate the total cost of the the path
 def getCurrentStatePathCost(currentStatePath):
     cost = 0
     for state in currentStatePath:
@@ -327,10 +307,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     fringeList.push(tempStatePath, totalCost)
 
                 alreadyExpandedItemsList.append(currentState)
-                # print "fringelist size : ", len(fringeList.list)
-                # print "fringelist cont : "
-                # for l in fringeList.list:
-                #     print l
 
             else:
                 # print "already expanded : ", currentState
