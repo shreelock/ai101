@@ -298,8 +298,73 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    fringeList = util.PriorityQueue()
+    alreadyExpandedItemsList = []
+
+    currentState = problem.getStartState()
+    currentStatePath = [(currentState, 'Start', 0,)]
+    currentStatePathCost = getCurrentStatePathCost(currentStatePath)
+    fringeList.push(currentStatePath, currentStatePathCost)
+    foundGoal = False
+
+
+
+    def check_heuristic(current,goal):
+        x1,y1=current
+        x2,y2=goal
+        return abs(x1 - x2) + abs(y1 - y2)
+
+
+    while True:
+        if not problem.isGoalState(currentState):
+            if currentState not in alreadyExpandedItemsList:
+
+                successorsRichData = problem.getSuccessors(currentState)
+                # print "successors : ", successorsRichData
+
+                for successor in successorsRichData:
+                    tempStatePath = list(currentStatePath)
+                    h=check_heuristic(successor[0],problem.goal)
+                    g=getCurrentStatePathCost(tempStatePath)
+                    f=g+h
+                    tempStatePath.insert(0, successor)
+                    fringeList.push(tempStatePath, f)
+
+                alreadyExpandedItemsList.append(currentState)
+                print "fringelist size : ", fringeList.count
+                # print "fringelist cont : "
+                # for l in fringeList.list:
+                #     print l
+
+            else:
+                # print "already expanded : ", currentState
+                pass
+            currentStatePath=fringeList.pop()
+            currentState=currentStatePath[0][0]
+        else:
+            # print "found goal state : ", currentStatePath
+            foundGoal = True
+        if foundGoal:
+            break
+
+    dirPath = []
+    for state in currentStatePath:
+        step = state[1]
+        if step is not 'Start':
+            dirPath.append(step)
+    dirPath.reverse()
+
+    print "found direction path as : ", list(dirPath)
+
+    return list(dirPath)
+
+
+def getCurrentStatePathCost(currentStatePath):
+    cost = 0
+    for state in currentStatePath:
+        cost = cost + state[2]
+    return cost
 
 # Abbreviations
 bfs = breadthFirstSearch
