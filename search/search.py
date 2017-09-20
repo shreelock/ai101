@@ -297,27 +297,19 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+    print "Start:", problem.getStartState()
 
+    # Since we want to implement A Star Search, we are using a Priority queue as our fringe list
     fringeList = util.PriorityQueue()
     alreadyExpandedItemsList = []
 
     currentState = problem.getStartState()
     currentStatePath = [(currentState, 'Start', 0,)]
-    currentStatePathCost = getCurrentStatePathCost(currentStatePath)
-    fringeList.push(currentStatePath, currentStatePathCost)
     foundGoal = False
-
-
-
-    def check_heuristic(current,goal):
-        x1,y1=current
-        x2,y2=goal
-        return abs(x1 - x2) + abs(y1 - y2)
-
 
     while True:
         if not problem.isGoalState(currentState):
+            # print "\n\nalreadyExpandedItemsList : ", alreadyExpandedItemsList
             if currentState not in alreadyExpandedItemsList:
 
                 successorsRichData = problem.getSuccessors(currentState)
@@ -325,14 +317,17 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
                 for successor in successorsRichData:
                     tempStatePath = list(currentStatePath)
-                    h=check_heuristic(successor[0],problem.goal)
-                    g=getCurrentStatePathCost(tempStatePath)
-                    f=g+h
                     tempStatePath.insert(0, successor)
-                    fringeList.push(tempStatePath, f)
+                    # Forward Cost estimated by heuristic
+                    h = heuristic(successor[0], problem)
+                    # Backward Cost of the current path travelled
+                    g = getCurrentStatePathCost(tempStatePath)
+                    totalCost = g + h
+
+                    fringeList.push(tempStatePath, totalCost)
 
                 alreadyExpandedItemsList.append(currentState)
-                print "fringelist size : ", fringeList.count
+                # print "fringelist size : ", len(fringeList.list)
                 # print "fringelist cont : "
                 # for l in fringeList.list:
                 #     print l
@@ -340,11 +335,15 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             else:
                 # print "already expanded : ", currentState
                 pass
-            currentStatePath=fringeList.pop()
-            currentState=currentStatePath[0][0]
+            currentStatePath = fringeList.pop()
+            # print "Popped Item from the stack : ", currentStatePath, len(currentStatePath)
+            currentState = currentStatePath[0][0]
+            # print "Got currentState as : ", currentState
+
         else:
             # print "found goal state : ", currentStatePath
             foundGoal = True
+
         if foundGoal:
             break
 
@@ -359,12 +358,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
     return list(dirPath)
 
-
-def getCurrentStatePathCost(currentStatePath):
-    cost = 0
-    for state in currentStatePath:
-        cost = cost + state[2]
-    return cost
 
 # Abbreviations
 bfs = breadthFirstSearch
