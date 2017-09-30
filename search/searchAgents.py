@@ -262,6 +262,10 @@ def euclideanHeuristic(position, problem, info={}):
     xy2 = problem.goal
     return ( (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2 ) ** 0.5
 
+def admissibleDistance(pt1, pt2):
+    ## Mahattan distance
+    return abs(pt1[0] - pt2[0]) + abs(pt1[1] - pt2[1])
+
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
@@ -294,11 +298,13 @@ class CornersProblem(search.SearchProblem):
         """
         #We are using the following as the customStateSpace for our problem -
         #1 Position (coordinates)
-        #2 Position of Corners left to visit
-        #3 For each iteration of find successors,
+        #2 Position of Corners, and their state - Eaten or Not Eaten.
+
+        # For each iteration of findSuccessors,
         # we'll check what all corners are left and
         # if the successor is one of the corners, we'll automatically update
         # its list of corners left  to visit after going through that state.
+        # As usual, well still update the Direction, an the cost fucntion of the states.
         cornersTouched = {}
         for corner in self.corners:
             cornersTouched[corner]=False
@@ -309,11 +315,13 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        #Goal State is the state when all the corners are touched (eaten by the man)
+        # Goal State is the state when all the corners are touched (eaten by the man)
         cornersTouched = state[1]
         for key, value in cornersTouched.iteritems():
             if not value:
+                #If any of the food is untouched.
                 return False
+
         #If all corners are touched
         return True
 
@@ -342,6 +350,8 @@ class CornersProblem(search.SearchProblem):
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
                 cost = self.costFn(nextState)
+                # If the Next state is a food, we'll copy the state of food eaten ot not eaten from the parent,
+                # , and we update the corresponding food as eaten, since pacman has touched that state.
                 if nextState in tempCornersTouched:
                     tempCornersTouched[nextState] = True
                 nextStateWithCornerInfo = (nextState, tempCornersTouched)
@@ -378,12 +388,26 @@ def cornersHeuristic(state, problem):
     This function should always return a number that is a lower bound on the
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
-    """
+
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+
+    ***Our Heuristic : Comparing maximum distance between all the corners that are untouched.***
+    """
+    cornersDist = []
+    for corner, isTouched in state[1].iteritems():
+        if not isTouched:
+            #Get distance from all the untouched Food items
+            cornersDist.append(admissibleDistance(corner, state[0]))
+
+
+    if len(cornersDist) > 0:
+        return max(cornersDist)
+    else:
+        # When all corners are reached, i.e. last state
+        # Default to trivial solution
+        return 0
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -476,8 +500,46 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    answer = 0
+    uneatenFood =  foodGrid.asList()
+
+    """ Heuristic 1 : BASIC : ADMISSIBLE"""
+    """
+    max = 0
+    for foo in uneatenFood:
+        fooDist =admissibleDistance(position, foo)
+        if fooDist > max :
+            max = fooDist
+    answer = max
+    """
+
+    """ Hueristic 3 : Manhattan's Distances between extreme points: ADMISSIBLE"""
+    """In this heuristic, we are calculating the following -
+        1. We relax our problem assuming that all of the food positions follow a monotonically increasing shape, on either side of the pacman.
+        2. We then project each of the food item to its X and Y axis, and calculate the range in which the pacman will have to move
+        3. We do this by calculating manhatten distance between those extreme points.
+        4. Moreover, we want pacman to go to the nearest extreme point first, and then scale the path to the farthest point from there.
+        5. This relaxed state is such that pacman moves in step wise motion from one point to other, without needing to turn back in either direction
+        6. More explanation, is in the Project report.
+    
+    """
+
+
+    foodProcessingUnit = list(uneatenFood)
+    if len(foodProcessingUnit)>0 :
+        xcoords, ycoords = zip(*foodProcessingUnit)
+        xmax = max(xcoords)
+        xmin = min(xcoords)
+        ymax = max(ycoords)
+        ymin = min(ycoords)
+
+        x,y = position
+
+        dist = abs(xmax-xmin) + min(abs(xmax-x),abs(x-xmin)) \
+               + abs(ymax-ymin) + min(abs(ymax-y), abs(y-ymin))
+        answer = dist
+
+    return answer
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
