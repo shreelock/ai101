@@ -152,7 +152,7 @@ if __name__ == '__main__':
     alpha = 1
     const_addendum = 1000
     opwritefile = open(outputfilename, 'wb')
-    csvwriter = csv.writer(opwritefile, delimiter=' ')
+    csvwriter = csv.writer(opwritefile, delimiter=',')
 
     for row in filereader:
         testwordfreq = {}
@@ -172,8 +172,8 @@ if __name__ == '__main__':
             pred_labels.append('ham')
             csvwriter.writerow([fileindex, 'ham'])
 
-    from sklearn.metrics import accuracy_score
-    print accuracy_score(labels, pred_labels)
+    #from sklearn.metrics import accuracy_score
+    #print accuracy_score(labels, pred_labels)
 
 
 
